@@ -1,26 +1,28 @@
 package dateservice
 
 import (
+	"context"
 	"fmt"
-	"net/http"
 
-	"github.com/rs/zerolog/log"
+	"github.com/the-kwisatz-haderach/optidate/dateapi"
 )
 
-type Service struct{}
-
-const basepath = "https://date.nager.at/api/v3/"
-
-func New() *Service {
-	return &Service{}
+type Service struct {
+	dateapi *dateapi.APIClient
 }
 
-func (s *Service) GetCountries() {
-	requestURL := fmt.Sprintf(basepath + "AvailableCountries")
-	_, err := http.Get(requestURL)
+func New() *Service {
+	config := dateapi.NewConfiguration()
+	config.Scheme = "https"
+	config.Host = "date.nager.at"
+	apiClient := dateapi.NewAPIClient(config)
+	return &Service{apiClient}
+}
+
+func (s *Service) GetCountries(ctx context.Context) ([]dateapi.CountryV3Dto, error) {
+	resp, _, err := s.dateapi.CountryAPI.CountryAvailableCountries(ctx).Execute()
 	if err != nil {
-		log.Err(err).Msg("error fetching available countries")
-		return
+		return nil, fmt.Errorf("error when calling `CountryAPI.CountryAvailableCountries``: %v", err)
 	}
-	fmt.Println(requestURL)
+	return resp, nil
 }
