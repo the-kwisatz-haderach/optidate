@@ -1,0 +1,461 @@
+openapi: 3.0.1
+info:
+  contact:
+    name: Nager.Date on GitHub
+    url: https://github.com/nager/Nager.Date
+  description: Nager.Date is open source software. If you would like to support the
+    project you can award a GitHub star ⭐ or much better <a href='https://github.com/sponsors/nager'>start
+    a sponsorship</a>
+  termsOfService: https://date.nager.at/TermsOfService
+  title: Nager.Date API - V3
+  version: v3
+servers:
+- url: /
+paths:
+  /api/v3/CountryInfo/{countryCode}:
+    get:
+      operationId: CountryCountryInfo
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: countryCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/CountryInfoDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryInfoDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/CountryInfoDto'
+          description: OK
+      summary: Get country info for the given country
+      tags:
+      - Country
+  /api/v3/AvailableCountries:
+    get:
+      operationId: CountryAvailableCountries
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountryV3Dto'
+                type: array
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountryV3Dto'
+                type: array
+            text/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CountryV3Dto'
+                type: array
+          description: OK
+      summary: Get all available countries
+      tags:
+      - Country
+  /api/v3/LongWeekend/{year}/{countryCode}:
+    get:
+      operationId: LongWeekendLongWeekend
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: year
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      - description: ""
+        explode: false
+        in: path
+        name: countryCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LongWeekendV3Dto'
+                type: array
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LongWeekendV3Dto'
+                type: array
+            text/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LongWeekendV3Dto'
+                type: array
+          description: OK
+      summary: Get long weekends for a given country
+      tags:
+      - LongWeekend
+  /api/v3/PublicHolidays/{year}/{countryCode}:
+    get:
+      operationId: PublicHolidayPublicHolidaysV3
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: year
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      - description: ""
+        explode: false
+        in: path
+        name: countryCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            text/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+          description: Public holidays
+        "400":
+          description: Validation failure
+        "404":
+          description: CountryCode is unknown
+      summary: Get public holidays
+      tags:
+      - PublicHoliday
+  /api/v3/IsTodayPublicHoliday/{countryCode}:
+    get:
+      description: "The calculation is made on the basis of UTC time to adjust the\
+        \ time please use the offset.\n\r\nThis is a special endpoint for `curl`\n\
+        \n\r\n200 = Today is a public holiday\n\r\n204 = Today is not a public holiday\n\
+        \n\r\n`STATUSCODE=$(curl --silent --output /dev/stderr --write-out \"%{http_code}\"\
+        \ https://date.nager.at/Api/v3/IsTodayPublicHoliday/AT)`\n\n\r\n`if [ $STATUSCODE\
+        \ -ne 200 ]; then # error handling; fi`"
+      operationId: PublicHolidayIsTodayPublicHoliday
+      parameters:
+      - description: The Country Code
+        explode: false
+        in: path
+        name: countryCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Federal State Code
+        explode: true
+        in: query
+        name: countyCode
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: utc timezone offset
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          default: 0
+          format: int32
+          maximum: 12
+          minimum: -12
+          type: integer
+        style: form
+      responses:
+        "200":
+          description: Today is a public holiday
+        "204":
+          description: Today is not a public holiday
+        "400":
+          description: Validation failure
+        "404":
+          description: CountryCode is unknown
+      summary: Is today a public holiday
+      tags:
+      - PublicHoliday
+  /api/v3/NextPublicHolidays/{countryCode}:
+    get:
+      operationId: PublicHolidayNextPublicHolidays
+      parameters:
+      - explode: false
+        in: path
+        name: countryCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            text/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+          description: OK
+      summary: Returns the upcoming public holidays for the next 365 days for the
+        given country
+      tags:
+      - PublicHoliday
+  /api/v3/NextPublicHolidaysWorldwide:
+    get:
+      operationId: PublicHolidayNextPublicHolidaysWorldwide
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+            text/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PublicHolidayV3Dto'
+                type: array
+          description: OK
+      summary: Returns the upcoming public holidays for the next 7 days
+      tags:
+      - PublicHoliday
+  /api/v3/Version:
+    get:
+      operationId: VersionGetVersion
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/VersionInfoDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfoDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfoDto'
+          description: OK
+      summary: Get the version of the used Nager.Date library
+      tags:
+      - Version
+components:
+  schemas:
+    CountryInfoDto:
+      additionalProperties: false
+      description: CountryInfo Dto
+      example:
+        commonName: commonName
+        borders:
+        - null
+        - null
+        countryCode: countryCode
+        officialName: officialName
+        region: region
+      properties:
+        commonName:
+          description: CommonName
+          nullable: true
+          type: string
+        officialName:
+          description: OfficialName
+          nullable: true
+          type: string
+        countryCode:
+          description: CountryCode
+          nullable: true
+          type: string
+        region:
+          description: Region
+          nullable: true
+          type: string
+        borders:
+          description: Country Borders
+          items:
+            $ref: '#/components/schemas/CountryInfoDto'
+          nullable: true
+          type: array
+      required:
+      - commonName
+      - countryCode
+      - officialName
+      - region
+      type: object
+    CountryV3Dto:
+      additionalProperties: false
+      description: Country
+      example:
+        countryCode: countryCode
+        name: name
+      properties:
+        countryCode:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+      required:
+      - countryCode
+      - name
+      type: object
+    HolidayTypes:
+      enum:
+      - Public
+      - Bank
+      - School
+      - Authorities
+      - Optional
+      - Observance
+      type: string
+    LongWeekendV3Dto:
+      additionalProperties: false
+      description: Long Weekend
+      example:
+        dayCount: 0
+        endDate: 2000-01-23T04:56:07.000+00:00
+        needBridgeDay: true
+        startDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        startDate:
+          description: StartDate
+          format: date-time
+          type: string
+        endDate:
+          description: EndDate
+          format: date-time
+          type: string
+        dayCount:
+          description: DayCount
+          format: int32
+          type: integer
+        needBridgeDay:
+          description: NeedBridgeDay
+          type: boolean
+      type: object
+    PublicHolidayV3Dto:
+      additionalProperties: false
+      description: Public Holiday
+      example:
+        date: 2000-01-23
+        localName: localName
+        types:
+        - Public
+        - Public
+        launchYear: 0
+        countryCode: countryCode
+        name: name
+        fixed: true
+        global: true
+        counties:
+        - counties
+        - counties
+      properties:
+        date:
+          description: The date
+          format: date
+          type: string
+        localName:
+          description: Local name
+          nullable: true
+          type: string
+        name:
+          description: English name
+          nullable: true
+          type: string
+        countryCode:
+          description: ISO 3166-1 alpha-2
+          nullable: true
+          type: string
+        fixed:
+          deprecated: true
+          description: Is this public holiday every year on the same date
+          type: boolean
+        global:
+          description: Is this public holiday in every county (federal state)
+          type: boolean
+        counties:
+          description: ISO-3166-2 - Federal states
+          items:
+            type: string
+          nullable: true
+          type: array
+        launchYear:
+          description: The launch year of the public holiday
+          format: int32
+          nullable: true
+          type: integer
+        types:
+          description: A list of types the public holiday it is valid
+          items:
+            $ref: '#/components/schemas/HolidayTypes'
+          nullable: true
+          type: array
+      required:
+      - countryCode
+      - localName
+      - name
+      - types
+      type: object
+    VersionInfoDto:
+      additionalProperties: false
+      description: Version Info Dto
+      example:
+        name: name
+        version: version
+      properties:
+        name:
+          description: Name
+          nullable: true
+          type: string
+        version:
+          description: Version
+          nullable: true
+          type: string
+      required:
+      - name
+      - version
+      type: object
