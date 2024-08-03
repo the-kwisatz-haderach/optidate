@@ -1,29 +1,18 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/the-kwisatz-haderach/optidate/internal/dateservice"
+	"github.com/the-kwisatz-haderach/optidate/internal/router"
 )
 
+const PORT = 8000
+
 func main() {
-	ctx := context.Background()
-	router := http.NewServeMux()
-
 	ds := dateservice.New()
-
-	router.HandleFunc("/countries", func(w http.ResponseWriter, r *http.Request) {
-		resp, err := ds.GetCountries(ctx)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
-	})
-
-	http.ListenAndServe(":8000", router)
+	router := router.New(ds)
+	fmt.Printf("listening on port %d...", PORT)
+	http.ListenAndServe(fmt.Sprintf(":%d", PORT), router)
 }

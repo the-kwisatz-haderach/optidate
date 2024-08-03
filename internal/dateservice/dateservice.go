@@ -7,10 +7,6 @@ import (
 	"github.com/the-kwisatz-haderach/optidate/dateapi"
 )
 
-type Service struct {
-	dateapi *dateapi.APIClient
-}
-
 func New() *Service {
 	config := dateapi.NewConfiguration()
 	config.Scheme = "https"
@@ -22,7 +18,19 @@ func New() *Service {
 func (s *Service) GetCountries(ctx context.Context) ([]dateapi.CountryV3Dto, error) {
 	resp, _, err := s.dateapi.CountryAPI.CountryAvailableCountries(ctx).Execute()
 	if err != nil {
-		return nil, fmt.Errorf("error when calling `CountryAPI.CountryAvailableCountries``: %v", err)
+		return nil, fmt.Errorf("error when calling `CountryAvailableCountries``: %v", err)
 	}
 	return resp, nil
+}
+
+func (s *Service) GetCalendar(ctx context.Context, countryCode string, threshold int) ([]FormattedDate, error) {
+	resp, _, err := s.dateapi.PublicHolidayAPI.PublicHolidayNextPublicHolidays(ctx, countryCode).Execute()
+	if err != nil {
+		return nil, fmt.Errorf("error when calling `PublicHolidayNextPublicHolidays``: %v", err)
+	}
+	formatted, err := createCalendar(resp, threshold)
+	if err != nil {
+		return nil, fmt.Errorf("error when formatting dates`: %v", err)
+	}
+	return formatted, nil
 }
