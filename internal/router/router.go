@@ -16,6 +16,9 @@ type ApiError struct {
 func New(service *dateservice.Service) http.Handler {
 	router := httprouter.New()
 
+	// Serve frontend SPA
+	router.NotFound = http.FileServer(http.Dir("frontend/dist/"))
+
 	router.GET("/countries", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		resp, err := service.GetCountries(r.Context())
 		if err != nil {
