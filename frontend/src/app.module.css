@@ -1,0 +1,37 @@
+.main {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.header {
+  margin-top: 2rem;
+}
+
+.grid {
+  margin: 60px auto;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  justify-items: center;
+}
+
+.item {
+  padding: 1rem;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.weekend {
+  background-color: rgb(114, 114, 114);
+  color: white;
+}
+
+.holiday {
+  background-color: rgb(50, 50, 50);
+  color: white;
+}
+
+.squeeze {
+  background-color: rgb(29, 173, 99);
+  color: white;
+}

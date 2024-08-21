@@ -9,11 +9,18 @@
     "preview": "bunx --bun vite preview"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "preact": "^10.22.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.3",
+    "msw": "^2.3.5",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

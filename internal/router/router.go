@@ -25,14 +25,15 @@ func New(service *dateservice.Service) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resp)
 	})
 
 	router.GET("/calendar/:country", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		var err error
 		w.Header().Set("Content-Type", "application/json")
+		var opts dateservice.CreateCalendarOptions
+
 		countryCode := ps.ByName("country")
 		if len(countryCode) != 2 {
 			w.WriteHeader(http.StatusBadRequest)
@@ -40,18 +41,32 @@ func New(service *dateservice.Service) http.Handler {
 			json.NewEncoder(w).Encode(resp)
 			return
 		}
+
 		tq := r.URL.Query().Get("threshold")
-		var threshold int
 		if tq != "" {
-			threshold, err = strconv.Atoi(tq)
+			threshold, err := strconv.Atoi(tq)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				resp := ApiError{"invalid value for query 'threshold'"}
 				json.NewEncoder(w).Encode(resp)
 				return
 			}
+			opts.Threshold = threshold
 		}
-		resp, err := service.GetCalendar(r.Context(), countryCode, threshold)
+
+		yq := r.URL.Query().Get("year")
+		if yq != "" {
+			year, err := strconv.Atoi(yq)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				resp := ApiError{"invalid value for query 'days'"}
+				json.NewEncoder(w).Encode(resp)
+				return
+			}
+			opts.Year = year
+		}
+
+		resp, err := service.GetCalendar(r.Context(), countryCode, opts)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			resp := ApiError{"unknown error"}
