@@ -1,0 +1,45 @@
+.dateContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+}
+
+.container {
+  background: linear-gradient(140deg, #f9f9f9, #d1d1d1);
+}
+
+.dateName {
+  letter-spacing: 1px;
+}
+
+.date {
+  min-width: 18px;
+}
+
+.holidayName {
+  opacity: 0.8;
+  font-size: 0.6rem;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+}
+
+.weekend {
+  background: linear-gradient(140deg, black, #444444);
+  color: white;
+}
+
+.holiday {
+  background: linear-gradient(140deg, #680000, #ff5b5b);
+  color: white;
+}
+
+.squeeze {
+  background: linear-gradient(140deg, #004e25, #00b976);
+  color: white;
+}

@@ -1,0 +1,83 @@
+.wrapper {
+  height: 100vh;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  position: relative;
+  background: linear-gradient(140deg, #ffffff, #dce4fd);
+  overscroll-behavior-y: contain;
+}
+
+.wrapper.disableScroll {
+  overflow-y: hidden;
+}
+
+.stepperControl {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: fixed;
+  z-index: 1;
+  height: 60px;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  transition: color 0.3s ease-in-out;
+  font-size: 0.8rem;
+}
+
+.stepperControl:disabled {
+  color: #0000005e;
+}
+
+.step {
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 60px 2rem;
+  justify-content: center;
+}
+
+.stepperControl > *:first-child {
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0vw);
+}
+
+.stepperControl > *:last-child {
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0px);
+}
+
+.show {
+  transform: translateX(0px) !important;
+}
+
+.hide {
+  transform: translateX(100vw) !important;
+}
+
+.top {
+  top: 0;
+}
+
+.bottom {
+  bottom: 0;
+}
+
+.in > *:first-child > *:first-child {
+  transform: translateX(0vw);
+}
+
+.out > *:first-child > *:first-child {
+  transform: translateX(-100vw);
+}
+
+.in > *:last-child > *:first-child {
+  transform: translateX(0vw);
+}
+
+.out > *:last-child > *:first-child {
+  transform: translateX(-100vw);
+}

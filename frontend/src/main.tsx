@@ -1,6 +1,7 @@
 import { render } from 'preact'
 import { App } from './app.tsx'
 import './index.css'
+import AppProvider from './context/AppProvider.tsx'
 
 async function enableMocking() {
   if (process.env.NODE_ENV !== 'development') {
@@ -15,5 +16,10 @@ async function enableMocking() {
 }
 
 enableMocking().then(() => {
-  render(<App />, document.getElementById('app')!)
+  render(
+    <AppProvider>
+      <App />
+    </AppProvider>,
+    document.getElementById('app')!
+  )
 })
