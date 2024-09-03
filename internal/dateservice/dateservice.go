@@ -4,33 +4,68 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/rs/zerolog/log"
 	"github.com/the-kwisatz-haderach/optidate/dateapi"
 )
 
-func New() *Service {
+func New(cache ServiceCache) *Service {
 	config := dateapi.NewConfiguration()
 	config.Scheme = "https"
 	config.Host = "date.nager.at"
 	apiClient := dateapi.NewAPIClient(config)
-	return &Service{apiClient}
+	return &Service{apiClient, cache}
+}
+
+func createCacheKey(year int32, countryCode string) string {
+	return fmt.Sprintf("%d%s", year, countryCode)
 }
 
 func (s *Service) GetCountries(ctx context.Context) ([]dateapi.CountryV3Dto, error) {
-	resp, _, err := s.dateapi.CountryAPI.CountryAvailableCountries(ctx).Execute()
-	if err != nil {
-		return nil, fmt.Errorf("error when calling `CountryAvailableCountries``: %v", err)
+	var err error
+	ck := "countries"
+	resp := s.cache.Get(ck)
+	if resp == nil {
+		resp, _, err = s.dateapi.CountryAPI.CountryAvailableCountries(ctx).Execute()
+		if err != nil {
+			log.Error().Err(err).Msg("error when calling `CountryAvailableCountries`")
+			return nil, err
+		}
+		s.cache.Set(ck, resp)
 	}
-	return resp, nil
+	return resp.([]dateapi.CountryV3Dto), nil
 }
 
 func (s *Service) GetCalendar(ctx context.Context, countryCode string, opts CreateCalendarOptions) ([]FormattedDate, error) {
-	resp, _, err := s.dateapi.PublicHolidayAPI.PublicHolidayPublicHolidaysV3(ctx, int32(opts.Year), countryCode).Execute()
-	if err != nil {
-		return nil, fmt.Errorf("error when calling `PublicHolidayNextPublicHolidays``: %v", err)
+	var err error
+	ck := createCacheKey(int32(opts.Year), countryCode)
+	resp := s.cache.Get(ck)
+	if resp == nil {
+		resp, _, err = s.dateapi.PublicHolidayAPI.PublicHolidayPublicHolidaysV3(ctx, int32(opts.Year), countryCode).Execute()
+		if err != nil {
+			log.Error().Err(err).Msg("error when calling `PublicHolidayNextPublicHolidays`")
+			return nil, err
+		}
+		s.cache.Set(ck, resp)
 	}
-	formatted, err := createCalendar(resp, opts)
+	ckNext := createCacheKey(int32(opts.Year)+1, countryCode)
+	respNext := s.cache.Get(ckNext)
+	if respNext == nil {
+		respNext, _, err = s.dateapi.PublicHolidayAPI.PublicHolidayPublicHolidaysV3(ctx, int32(opts.Year)+1, countryCode).Execute()
+		if err != nil {
+			log.Error().Err(err).Msg("error when calling `PublicHolidayNextPublicHolidays`")
+			return nil, err
+		}
+		s.cache.Set(ckNext, respNext)
+	}
+	rn := respNext.([]dateapi.PublicHolidayV3Dto)
+	r := resp.([]dateapi.PublicHolidayV3Dto)
+	if len(rn) > 0 {
+		resp = append(r, rn[0])
+	}
+	formatted, err := createCalendar(r, opts)
 	if err != nil {
-		return nil, fmt.Errorf("error when formatting dates`: %v", err)
+		log.Error().Err(err).Msg("error when formatting dates")
+		return nil, err
 	}
 	return formatted, nil
 }

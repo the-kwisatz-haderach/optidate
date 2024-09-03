@@ -4,8 +4,14 @@ import (
 	"github.com/the-kwisatz-haderach/optidate/dateapi"
 )
 
+type ServiceCache interface {
+	Get(key string) interface{}
+	Set(key string, value interface{})
+}
+
 type Service struct {
 	dateapi *dateapi.APIClient
+	cache   ServiceCache
 }
 
 type FormattedDate struct {

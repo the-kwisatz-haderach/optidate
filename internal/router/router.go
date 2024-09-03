@@ -9,10 +9,6 @@ import (
 	"github.com/the-kwisatz-haderach/optidate/internal/dateservice"
 )
 
-type ApiError struct {
-	Message string `json:"message"`
-}
-
 func New(service *dateservice.Service) http.Handler {
 	router := httprouter.New()
 
@@ -22,7 +18,7 @@ func New(service *dateservice.Service) http.Handler {
 	router.GET("/countries", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		resp, err := service.GetCountries(r.Context())
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			JSONError(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -36,9 +32,7 @@ func New(service *dateservice.Service) http.Handler {
 
 		countryCode := ps.ByName("country")
 		if len(countryCode) != 2 {
-			w.WriteHeader(http.StatusBadRequest)
-			resp := ApiError{"invalid country code"}
-			json.NewEncoder(w).Encode(resp)
+			JSONError(w, "invalid country code", http.StatusBadRequest)
 			return
 		}
 
@@ -46,9 +40,7 @@ func New(service *dateservice.Service) http.Handler {
 		if tq != "" {
 			threshold, err := strconv.Atoi(tq)
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				resp := ApiError{"invalid value for query 'threshold'"}
-				json.NewEncoder(w).Encode(resp)
+				JSONError(w, "invalid value for query 'threshold'", http.StatusBadRequest)
 				return
 			}
 			opts.Threshold = threshold
@@ -58,9 +50,7 @@ func New(service *dateservice.Service) http.Handler {
 		if yq != "" {
 			year, err := strconv.Atoi(yq)
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				resp := ApiError{"invalid value for query 'days'"}
-				json.NewEncoder(w).Encode(resp)
+				JSONError(w, "invalid value for query 'days'", http.StatusBadRequest)
 				return
 			}
 			opts.Year = year
@@ -68,9 +58,7 @@ func New(service *dateservice.Service) http.Handler {
 
 		resp, err := service.GetCalendar(r.Context(), countryCode, opts)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			resp := ApiError{"unknown error"}
-			json.NewEncoder(w).Encode(resp)
+			JSONError(w, "unknown error", http.StatusInternalServerError)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
