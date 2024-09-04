@@ -1,4 +1,4 @@
-REPOSITORY=europe-west1-docker.pkg.dev/optidate-411610/optidate
+REPOSITORY=europe-west1-docker.pkg.dev/optidate/optidate
 
 generate:
 	openapi-generator generate -i https://date.nager.at/swagger/v3/swagger.json -g go -o ./dateapi/ --additional-properties=packageName=dateapi
