@@ -10,7 +10,7 @@ type Props = PropsWithChildren<{
 
 export default function StepButton({ children, className, ...props }: Props) {
   return (
-    <button className={cn(styles.root, className)} {...props}>
+    <button role="button" className={cn(styles.root, className)} {...props}>
       {children}
     </button>
   )

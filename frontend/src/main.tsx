@@ -1,6 +1,6 @@
+import './index.css'
 import { render } from 'preact'
 import { App } from './app.tsx'
-import './index.css'
 import AppProvider from './context/AppProvider.tsx'
 
 async function enableMocking() {
