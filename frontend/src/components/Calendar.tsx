@@ -55,7 +55,10 @@ export const Calendar: StepperContentRenderer = ({ active }) => {
               Week
             </span>
             {filteredWeeks[0]?.map((d) => (
-              <span key={d.timestamp} className={styles.weekDay}>
+              <span
+                key={d.timestamp}
+                className={cn(styles.weekDay, styles.row)}
+              >
                 {new Date(d.timestamp).toLocaleString(navigator.language, {
                   weekday: 'short',
                 })}
@@ -75,7 +78,7 @@ export const Calendar: StepperContentRenderer = ({ active }) => {
                       </span>
                     )}
                     <span
-                      className={cn(styles.entryWrapper, {
+                      className={cn(styles.entryWrapper, styles.row, {
                         [styles.holiday]: date.isHoliday,
                         [styles.squeeze]:
                           !date.isHoliday &&

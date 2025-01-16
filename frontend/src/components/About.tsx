@@ -8,7 +8,6 @@ export const AboutStep: StepperContentRenderer = ({ title }) => {
       <p className={styles.description}>
         This app will help you find bridge days for a particular country and
         year. A bridge day is a working day in between non-working days.
-        Vacationing on bridge days is a good way of maximising time off work.
       </p>
     </div>
   )

@@ -3,6 +3,7 @@ import { StepperContentRenderer } from './Stepper/types'
 import { Country } from '../types'
 import { useAppContext } from '../context/AppProvider'
 import styles from './SelectCountry.module.css'
+import cx from 'clsx'
 
 export const SelectCountryStep: StepperContentRenderer = ({
   onSetComplete,
@@ -22,6 +23,10 @@ export const SelectCountryStep: StepperContentRenderer = ({
     }
   }, [active])
 
+  const filteredCountries = countries.filter((country) =>
+    country.name.toLowerCase().includes(query.toLowerCase())
+  )
+
   return (
     <div className={styles.wrapper}>
       <div>
@@ -32,7 +37,14 @@ export const SelectCountryStep: StepperContentRenderer = ({
             value={query}
             onChange={(e) => {
               setQuery(e.currentTarget.value)
-              if (state.countryCode) {
+              if (
+                filteredCountries.length === 1 &&
+                filteredCountries[0].name.toLowerCase() ===
+                  e.currentTarget.value.toLowerCase()
+              ) {
+                updateState({ countryCode: filteredCountries[0].countryCode })
+                onSetComplete(true)
+              } else if (state.countryCode) {
                 onSetComplete(false)
                 updateState({ countryCode: '' })
               }
@@ -41,37 +53,36 @@ export const SelectCountryStep: StepperContentRenderer = ({
         </div>
       </div>
       <ul className={styles.countryList}>
-        {countries
-          .filter((country) =>
-            country.name.toLowerCase().includes(query.toLowerCase())
-          )
-          .map((country) => (
-            <li key={country.countryCode}>
-              <div className={styles.countryInputContainer}>
-                <input
-                  id={country.countryCode}
-                  className={styles.countryInput}
-                  type="radio"
-                  checked={state.countryCode === country.countryCode}
-                  onChange={() => {
-                    setQuery(country.name)
-                    updateState({ countryCode: country.countryCode })
-                    onSetComplete(true)
-                  }}
+        {filteredCountries.map((country) => (
+          <li key={country.countryCode}>
+            <div className={styles.countryInputContainer}>
+              <input
+                id={country.countryCode}
+                className={styles.countryInput}
+                type="radio"
+                checked={state.countryCode === country.countryCode}
+                onChange={() => {
+                  setQuery(country.name)
+                  updateState({ countryCode: country.countryCode })
+                  onSetComplete(true)
+                }}
+              />
+              <label
+                htmlFor={country.countryCode}
+                className={cx(styles.countryLabel, {
+                  [styles.selectedCountry]:
+                    country.countryCode === state.countryCode,
+                })}
+              >
+                <img
+                  className={styles.flag}
+                  src={`https://flagsapi.com/${country.countryCode}/flat/24.png`}
                 />
-                <label
-                  htmlFor={country.countryCode}
-                  className={styles.countryLabel}
-                >
-                  <img
-                    className={styles.flag}
-                    src={`https://flagsapi.com/${country.countryCode}/flat/24.png`}
-                  />
-                  {country.name}
-                </label>
-              </div>
-            </li>
-          ))}
+                {country.name}
+              </label>
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   )

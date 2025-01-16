@@ -3,8 +3,10 @@
   margin-right: -2rem;
   width: 100vw;
   display: flex;
-  /* align-items: center; */
   font-size: 0.9rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  flex: 1;
 }
 
 .weeks {
@@ -50,9 +52,16 @@
   background-color: rgb(0 11 88 / 8%);
 }
 
+.row {
+  height: calc(30px + 3vh);
+}
+
 .weekDay {
   text-transform: capitalize;
   text-align: right;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .entryWrapper {
@@ -61,9 +70,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  /* border-radius: 0.5rem; */
   text-transform: uppercase;
   text-overflow: ellipsis;
+  flex: 1;
 }
 
 .holiday {
@@ -90,8 +99,9 @@
 .summary {
   display: flex;
   align-items: center;
-  flex: 1;
   font-size: 0.9rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .summary > div > span {
